@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Prefuse Modified" basedir="." default="copy2ciknowvis">
+	<property file="build.properties"/>
+    <property environment="env"/>
+	
+    <property name="src" value="${basedir}/src"/>
+    <property name="build" value="${basedir}/bin"/>
+    	
+	<path id="compile.classpath">
+		<fileset dir="${basedir}/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="clean" description="Delete old build directory and jar file">
+		<delete dir="${build}"/>		
+	</target>
+			
+    <target name="init" depends="clean">
+        <tstamp/>
+    	<mkdir dir="${build}"/>
+    </target>
+	
+	<target name="compile" description="Compile Java sources and create jar distribution">
+		<antcall target="init"></antcall>
+		
+		<javac srcdir="${src}" 
+			destdir="${build}" 
+			classpathref="compile.classpath">			
+		</javac>
+
+		<copy  todir="${build}">
+			<fileset dir="${src}" excludes="**/*.java"/>
+		</copy>		
+		
+		<jar destfile="${basedir}/prefuse.jar" basedir="${build}"/>
+	</target>
+	
+	<target name="compile5" description="Compile Java sources and create jar distribution">
+		<antcall target="init"></antcall>
+		
+		<javac srcdir="${src}" 
+			destdir="${build}" 
+			compiler="javac1.5"
+			fork="true"
+			executable="${java5.path}"
+			classpathref="compile.classpath">			
+		</javac>
+
+		<copy  todir="${build}">
+			<fileset dir="${src}" excludes="**/*.java"/>
+		</copy>		
+		
+		<jar destfile="${basedir}/prefuse5.jar" basedir="${build}"/>
+	</target>	
+	
+	<target name="copy2ciknowvis" depends="compile, compile5" description="Copy jars to ciknowvis">
+		<copy toDir="${ciknowvis.dir}" overwrite="true">
+			<fileset dir="${basedir}">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+	</target>   	
+</project>
